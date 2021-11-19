@@ -18,6 +18,7 @@ class AMonPremierTPCPPCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
+	
 public:
 	AMonPremierTPCPPCharacter();
 
@@ -28,6 +29,37 @@ public:
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		float playerHealth;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		bool isDead = false;
+
+	UPROPERTY(EditAnywhere)
+		float timeBeforeRespawn;
+
+	UPROPERTY(EditAnywhere)
+    class UStaticMeshComponent* ShootPointMesh;
+	
+	UPROPERTY(VisibleAnywhere)
+	bool hasSomethingInHand = false;
+
+	UPROPERTY(EditAnywhere)
+	class UStaticMeshComponent* PickupPointMesh;
+	
+	UPROPERTY(VisibleAnywhere)
+	AActor* actorInHand;
+
+	UPROPERTY(EditAnywhere)
+	UAnimBlueprint* animClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool isCrouching = false;
+	
+	float internDeathTimer;
+	bool hasRespawned = false;
+
 
 protected:
 
@@ -68,5 +100,39 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	UFUNCTION()
+		void GetDamage(float healthToRemove);
+
+	UFUNCTION()
+		void DoRagdoll();
+
+	UFUNCTION()
+		void Die();
+	
+	UFUNCTION()
+		void Respawn();
+
+	UFUNCTION()
+		void Pickup();
+
+	UFUNCTION()
+	void Hold();
+	
+	UFUNCTION()
+	void Release();
+
+	virtual void Tick(float DeltaTime) override;
+	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	void GetCrouch();
+
+	UFUNCTION()
+	void Shoot();
+	
+
+	void CheckLifeState();
+	void UpdateDeathTimer(float deltaTime);
 };
 
